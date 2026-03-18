@@ -86,8 +86,7 @@
   }
   #close-btn:hover { background:rgba(0,0,0,0.85); }
 
-  /* PHOTO CAROUSEL - removed */
-  .stop-hero { min-height:90px; }
+
 
   .detail-name-bar { padding:0.9rem 1.25rem 0.75rem; border-bottom:1px solid rgba(0,0,0,0.06); }
   .detail-name-bar h2 { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700; color:var(--deep); line-height:1.2; }
@@ -448,24 +447,20 @@ function initMap() {
 }
 
 // ── CAROUSEL ─────────────────────────────────────────────────────────
-function buildCarousel(stop) {
-  const color = catColor(stop.cat);
-  return `<div style="background:${color};padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
-    <div>
-      <div style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:white;line-height:1.2;">${stop.name}</div>
-      <div style="font-size:0.78rem;color:rgba(255,255,255,0.8);margin-top:0.2rem;">${catLabel(stop.cat)}</div>
-    </div>
-    ${stop.wiki ? `<a href="${stop.wiki}" target="_blank" rel="noopener" style="flex-shrink:0;background:rgba(255,255,255,0.2);color:white;text-decoration:none;padding:0.5rem 0.85rem;border-radius:8px;font-size:0.78rem;font-weight:600;border:1px solid rgba(255,255,255,0.3);white-space:nowrap;">Wikipedia ↗</a>` : ''}
-  </div>`;
-}
 
 // ── DETAIL ────────────────────────────────────────────────────────────
 function openDetail(stop) {
-  selectedStop=stop; carouselIdx=0;
+  selectedStop=stop;
   renderStops();
   if(map) map.panTo([stop.lat,stop.lng],{animate:true,duration:0.5});
   document.getElementById('detail-content').innerHTML=`
-    ${buildCarousel(stop)}
+    <div style="background:${catColor(stop.cat)};padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:white;line-height:1.2;">${stop.name}</div>
+        <div style="font-size:0.78rem;color:rgba(255,255,255,0.8);margin-top:0.25rem;">${catLabel(stop.cat)}</div>
+      </div>
+      ${stop.wiki ? `<a href="${stop.wiki}" target="_blank" rel="noopener" style="flex-shrink:0;background:rgba(255,255,255,0.2);color:white;text-decoration:none;padding:0.5rem 0.85rem;border-radius:8px;font-size:0.78rem;font-weight:600;border:1px solid rgba(255,255,255,0.3);white-space:nowrap;">Wikipedia ↗</a>` : ''}
+    </div>
     <div class="detail-body">
       <div class="detail-meta-grid">
         <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-value">${stop.duration}</div></div>
