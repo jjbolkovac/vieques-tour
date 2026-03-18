@@ -9,316 +9,169 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   :root {
-    --sand: #F5EDD8;
-    --deep: #1A2B2F;
-    --ocean: #1E6B8A;
-    --teal: #2AADA6;
-    --coral: #E07B54;
-    --bio: #4DD9AC;
-    --text: #1A2B2F;
-    --muted: #6B7B7E;
-    --white: #FFFFFF;
-    --card-bg: rgba(255,255,255,0.92);
+    --sand: #F5EDD8; --deep: #1A2B2F; --ocean: #1E6B8A;
+    --teal: #2AADA6; --bio: #4DD9AC; --text: #1A2B2F;
+    --muted: #6B7B7E; --white: #FFFFFF;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--sand);
-    color: var(--text);
-    min-height: 100vh;
-  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:var(--sand); color:var(--text); min-height:100vh; }
 
-  /* HEADER */
   header {
-    background: var(--deep);
-    padding: 0 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 60px;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    background:var(--deep); padding:0 1.5rem;
+    display:flex; align-items:center; justify-content:space-between;
+    height:60px; position:sticky; top:0; z-index:1000;
   }
-  .logo {
-    font-family: 'Playfair Display', serif;
-    color: var(--bio);
-    font-size: 1.3rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-  }
-  .logo span { color: var(--sand); font-weight: 400; font-size: 0.85rem; display: block; line-height: 1; }
-  nav { display: flex; gap: 0.25rem; }
+  .logo { font-family:'Playfair Display',serif; color:var(--bio); font-size:1.3rem; font-weight:700; }
+  .logo span { color:var(--sand); font-weight:400; font-size:0.85rem; display:block; line-height:1; }
+  nav { display:flex; gap:0.25rem; }
   nav button {
-    background: none;
-    border: none;
-    color: rgba(255,255,255,0.6);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.82rem;
-    font-weight: 500;
-    padding: 0.4rem 0.75rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    background:none; border:none; color:rgba(255,255,255,0.6);
+    font-family:'DM Sans',sans-serif; font-size:0.82rem; font-weight:500;
+    padding:0.4rem 0.75rem; border-radius:6px; cursor:pointer; transition:all 0.2s;
+    text-transform:uppercase; letter-spacing:0.04em;
   }
-  nav button:hover, nav button.active {
-    background: rgba(255,255,255,0.1);
-    color: var(--white);
-  }
-  nav button.active { color: var(--bio); }
+  nav button:hover, nav button.active { background:rgba(255,255,255,0.1); color:#fff; }
+  nav button.active { color:var(--bio); }
 
-  /* MAIN LAYOUT */
-  .app { display: flex; height: calc(100vh - 60px); }
+  .app { display:flex; height:calc(100vh - 60px); }
+  .sidebar { width:380px; min-width:320px; background:#fff; overflow-y:auto; border-right:1px solid rgba(0,0,0,0.08); display:flex; flex-direction:column; }
+  .view { display:none; flex-direction:column; flex:1; }
+  .view.active { display:flex; }
 
-  /* SIDEBAR */
-  .sidebar {
-    width: 380px;
-    min-width: 320px;
-    background: var(--white);
-    overflow-y: auto;
-    border-right: 1px solid rgba(0,0,0,0.08);
-    display: flex;
-    flex-direction: column;
-  }
+  .stops-header { padding:1.25rem 1.5rem 1rem; border-bottom:1px solid rgba(0,0,0,0.07); }
+  .stops-header h2 { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:600; color:var(--deep); margin-bottom:0.4rem; }
+  .stops-header p { font-size:0.82rem; color:var(--muted); line-height:1.5; }
 
-  /* VIEWS */
-  .view { display: none; flex-direction: column; flex: 1; }
-  .view.active { display: flex; }
-
-  /* STOPS VIEW */
-  .stops-header {
-    padding: 1.25rem 1.5rem 1rem;
-    border-bottom: 1px solid rgba(0,0,0,0.07);
-  }
-  .stops-header h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--deep);
-    margin-bottom: 0.4rem;
-  }
-  .stops-header p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
-
-  .filter-row {
-    display: flex;
-    gap: 0.4rem;
-    padding: 0.75rem 1.5rem;
-    border-bottom: 1px solid rgba(0,0,0,0.06);
-    flex-wrap: wrap;
-  }
+  .filter-row { display:flex; gap:0.4rem; padding:0.75rem 1.5rem; border-bottom:1px solid rgba(0,0,0,0.06); flex-wrap:wrap; }
   .filter-btn {
-    padding: 0.3rem 0.75rem;
-    border-radius: 20px;
-    border: 1.5px solid rgba(0,0,0,0.12);
-    font-size: 0.75rem;
-    font-weight: 500;
-    cursor: pointer;
-    background: none;
-    font-family: 'DM Sans', sans-serif;
-    color: var(--muted);
-    transition: all 0.2s;
+    padding:0.3rem 0.75rem; border-radius:20px; border:1.5px solid rgba(0,0,0,0.12);
+    font-size:0.75rem; font-weight:500; cursor:pointer; background:none;
+    font-family:'DM Sans',sans-serif; color:var(--muted); transition:all 0.2s;
   }
-  .filter-btn:hover { border-color: var(--teal); color: var(--teal); }
-  .filter-btn.on { background: var(--teal); border-color: var(--teal); color: white; }
+  .filter-btn:hover { border-color:var(--teal); color:var(--teal); }
+  .filter-btn.on { background:var(--teal); border-color:var(--teal); color:white; }
 
-  .stop-list { flex: 1; overflow-y: auto; padding: 0.5rem 0; }
+  .stop-list { flex:1; overflow-y:auto; padding:0.5rem 0; }
   .stop-card {
-    display: flex;
-    gap: 0.75rem;
-    padding: 0.9rem 1.5rem;
-    cursor: pointer;
-    border-bottom: 1px solid rgba(0,0,0,0.04);
-    transition: background 0.15s;
-    align-items: flex-start;
+    display:flex; gap:0.75rem; padding:0.9rem 1.5rem;
+    cursor:pointer; border-bottom:1px solid rgba(0,0,0,0.04);
+    transition:background 0.15s; align-items:flex-start;
   }
-  .stop-card:hover { background: rgba(0,0,0,0.025); }
-  .stop-card.selected { background: rgba(42,173,166,0.08); border-left: 3px solid var(--teal); padding-left: calc(1.5rem - 3px); }
-  .stop-num {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.75rem; font-weight: 700;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-  .stop-info { flex: 1; min-width: 0; }
-  .stop-name { font-weight: 500; font-size: 0.9rem; color: var(--deep); margin-bottom: 0.15rem; }
-  .stop-tagline { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
-  .stop-badges { display: flex; gap: 0.3rem; margin-top: 0.35rem; flex-wrap: wrap; }
-  .badge {
-    font-size: 0.68rem; font-weight: 600;
-    padding: 0.15rem 0.5rem;
-    border-radius: 10px;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-  }
+  .stop-card:hover { background:rgba(0,0,0,0.025); }
+  .stop-card.selected { background:rgba(42,173,166,0.08); border-left:3px solid var(--teal); padding-left:calc(1.5rem - 3px); }
+  .stop-num { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; flex-shrink:0; margin-top:2px; }
+  .stop-info { flex:1; min-width:0; }
+  .stop-name { font-weight:500; font-size:0.9rem; color:var(--deep); margin-bottom:0.15rem; }
+  .stop-tagline { font-size:0.78rem; color:var(--muted); line-height:1.4; }
+  .stop-badges { display:flex; gap:0.3rem; margin-top:0.35rem; flex-wrap:wrap; }
+  .badge { font-size:0.68rem; font-weight:600; padding:0.15rem 0.5rem; border-radius:10px; letter-spacing:0.03em; text-transform:uppercase; }
 
   /* DETAIL PANEL */
   .detail-panel {
-    position: fixed;
-    top: 60px; right: 0; bottom: 0;
-    width: 360px;
-    background: var(--white);
-    box-shadow: -4px 0 20px rgba(0,0,0,0.2);
-    overflow-y: auto;
-    z-index: 2000;
-    transform: translateX(100%);
-    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    position:fixed; top:60px; right:0; bottom:0; width:400px;
+    background:#fff; box-shadow:-4px 0 24px rgba(0,0,0,0.18);
+    overflow-y:auto; z-index:2000;
+    transform:translateX(100%);
+    transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
   }
-  .detail-panel.open { transform: translateX(0); }
-  .detail-close {
-    position: absolute; top: 1rem; right: 1rem;
-    background: rgba(0,0,0,0.55);
-    border: none; width: 38px; height: 38px;
-    border-radius: 50%; cursor: pointer; font-size: 1.1rem;
-    color: white; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s;
-    z-index: 10;
-  }
-  .detail-close:hover { background: rgba(0,0,0,0.8); }
-  .detail-hero {
-    height: 180px;
-    display: flex; align-items: flex-end;
-    padding: 1rem;
-    position: relative;
-  }
-  .detail-hero-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: white;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-    line-height: 1.2;
-  }
-  .detail-hero-sub { font-size: 0.8rem; color: rgba(255,255,255,0.85); margin-top: 0.2rem; }
-  .detail-body { padding: 1.25rem 1.5rem; }
-  .detail-section { margin-bottom: 1.25rem; }
-  .detail-section h3 {
-    font-size: 0.72rem; font-weight: 700;
-    color: var(--teal); letter-spacing: 0.08em;
-    text-transform: uppercase; margin-bottom: 0.5rem;
-  }
-  .detail-section p { font-size: 0.88rem; line-height: 1.65; color: var(--text); }
-  .detail-tips li { font-size: 0.85rem; line-height: 1.6; color: var(--text); margin-left: 1.1rem; margin-bottom: 0.2rem; }
-  .detail-meta-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 0.6rem; margin-bottom: 1rem;
-  }
-  .meta-item {
-    background: var(--sand);
-    border-radius: 8px;
-    padding: 0.6rem 0.75rem;
-  }
-  .meta-label { font-size: 0.68rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
-  .meta-value { font-size: 0.88rem; font-weight: 500; color: var(--deep); margin-top: 0.1rem; }
+  .detail-panel.open { transform:translateX(0); }
 
-  /* MAP */
-  #map { flex: 1; z-index: 1; }
+  /* CLOSE BUTTON */
+  #close-btn {
+    position:absolute; top:12px; right:12px; z-index:10;
+    background:rgba(0,0,0,0.6); border:none; color:white;
+    width:38px; height:38px; border-radius:50%; cursor:pointer;
+    font-size:1.1rem; font-weight:700; display:flex;
+    align-items:center; justify-content:center; transition:background 0.15s;
+  }
+  #close-btn:hover { background:rgba(0,0,0,0.85); }
 
-  /* ITINERARY VIEW */
-  .itinerary-view { padding: 1.25rem 1.5rem; overflow-y: auto; flex: 1; }
-  .itinerary-view h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem; font-weight: 600;
-    color: var(--deep); margin-bottom: 0.3rem;
+  /* PHOTO CAROUSEL */
+  .photo-carousel { position:relative; height:260px; background:#1a2b2f; overflow:hidden; }
+  .carousel-track { display:flex; height:100%; transition:transform 0.4s ease; }
+  .carousel-slide { min-width:100%; height:100%; overflow:hidden; }
+  .carousel-slide img { width:100%; height:100%; object-fit:cover; display:block; }
+  .no-photo { height:260px; background:#1a2b2f; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.35); font-size:0.85rem; }
+  .carousel-btn {
+    position:absolute; top:50%; transform:translateY(-50%);
+    background:rgba(0,0,0,0.5); border:none; color:white;
+    width:36px; height:36px; border-radius:50%; cursor:pointer;
+    font-size:1.2rem; display:flex; align-items:center; justify-content:center; z-index:5;
+    transition:background 0.2s;
   }
-  .itinerary-view > p { font-size: 0.82rem; color: var(--muted); margin-bottom: 1.25rem; line-height: 1.5; }
-  .day-block { margin-bottom: 1.5rem; }
-  .day-label {
-    font-size: 0.72rem; font-weight: 700;
-    color: var(--ocean); text-transform: uppercase;
-    letter-spacing: 0.08em; margin-bottom: 0.75rem;
-    display: flex; align-items: center; gap: 0.5rem;
-  }
-  .day-label::after { content: ''; flex: 1; height: 1px; background: rgba(0,0,0,0.08); }
-  .it-stop {
-    display: flex; gap: 0.75rem;
-    margin-bottom: 0; position: relative;
-  }
-  .it-left { display: flex; flex-direction: column; align-items: center; width: 28px; flex-shrink: 0; }
-  .it-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
-  .it-line { flex: 1; width: 2px; background: rgba(0,0,0,0.07); margin-top: 2px; min-height: 30px; }
-  .it-content {
-    flex: 1; padding-bottom: 1rem;
-    cursor: pointer;
-    transition: opacity 0.15s;
-  }
-  .it-content:hover { opacity: 0.8; }
-  .it-time { font-size: 0.72rem; color: var(--muted); font-weight: 500; margin-bottom: 0.1rem; }
-  .it-name { font-weight: 500; font-size: 0.9rem; color: var(--deep); }
-  .it-desc { font-size: 0.78rem; color: var(--muted); margin-top: 0.15rem; line-height: 1.4; }
-  .it-duration {
-    display: inline-block; font-size: 0.68rem; font-weight: 600;
-    background: rgba(0,0,0,0.05); padding: 0.1rem 0.4rem;
-    border-radius: 4px; color: var(--muted); margin-top: 0.3rem;
-  }
+  .carousel-btn:hover { background:rgba(0,0,0,0.8); }
+  .carousel-prev { left:10px; }
+  .carousel-next { right:10px; }
+  .carousel-dots { position:absolute; bottom:10px; left:50%; transform:translateX(-50%); display:flex; gap:5px; z-index:5; }
+  .carousel-dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.45); cursor:pointer; transition:background 0.2s; border:none; }
+  .carousel-dot.active { background:white; }
 
-  /* HISTORY VIEW */
-  .history-view { padding: 1.25rem 1.5rem; overflow-y: auto; flex: 1; }
-  .history-view h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem; font-weight: 600;
-    color: var(--deep); margin-bottom: 1rem;
-  }
-  .history-card {
-    background: var(--sand);
-    border-radius: 10px;
-    padding: 1rem 1.1rem;
-    margin-bottom: 0.75rem;
-    border-left: 3px solid var(--ocean);
-  }
-  .history-year { font-size: 0.72rem; font-weight: 700; color: var(--ocean); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.25rem; }
-  .history-title { font-weight: 600; font-size: 0.92rem; margin-bottom: 0.3rem; color: var(--deep); }
-  .history-text { font-size: 0.82rem; line-height: 1.6; color: #3a4a4e; }
+  .detail-name-bar { padding:0.9rem 1.25rem 0.75rem; border-bottom:1px solid rgba(0,0,0,0.06); }
+  .detail-name-bar h2 { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700; color:var(--deep); line-height:1.2; }
+  .detail-name-bar p { font-size:0.78rem; color:var(--muted); margin-top:0.2rem; }
+
+  .detail-body { padding:1rem 1.25rem 2rem; }
+  .detail-meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; margin-bottom:1rem; }
+  .meta-item { background:var(--sand); border-radius:8px; padding:0.6rem 0.75rem; }
+  .meta-label { font-size:0.68rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; }
+  .meta-value { font-size:0.88rem; font-weight:500; color:var(--deep); margin-top:0.1rem; }
+  .detail-section { margin-bottom:1.2rem; }
+  .detail-section h3 { font-size:0.72rem; font-weight:700; color:var(--teal); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.5rem; }
+  .detail-section p { font-size:0.88rem; line-height:1.65; color:var(--text); }
+  .detail-section ul { list-style:disc; padding-left:1.1rem; }
+  .detail-section li { font-size:0.85rem; line-height:1.6; margin-bottom:0.2rem; }
+
+  #map { flex:1; z-index:1; }
+
+  /* ITINERARY */
+  .scroll-view { padding:1.25rem 1.5rem; overflow-y:auto; flex:1; }
+  .scroll-view h2 { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:600; color:var(--deep); margin-bottom:0.3rem; }
+  .scroll-view > p { font-size:0.82rem; color:var(--muted); margin-bottom:1.25rem; line-height:1.5; }
+  .day-block { margin-bottom:1.5rem; }
+  .day-label { font-size:0.72rem; font-weight:700; color:var(--ocean); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem; }
+  .day-label::after { content:''; flex:1; height:1px; background:rgba(0,0,0,0.08); }
+  .it-stop { display:flex; gap:0.75rem; }
+  .it-left { display:flex; flex-direction:column; align-items:center; width:28px; flex-shrink:0; }
+  .it-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; margin-top:6px; }
+  .it-line { flex:1; width:2px; background:rgba(0,0,0,0.07); margin-top:2px; min-height:30px; }
+  .it-content { flex:1; padding-bottom:1rem; cursor:pointer; transition:opacity 0.15s; }
+  .it-content:hover { opacity:0.75; }
+  .it-time { font-size:0.72rem; color:var(--muted); font-weight:500; }
+  .it-name { font-weight:500; font-size:0.9rem; color:var(--deep); }
+  .it-desc { font-size:0.78rem; color:var(--muted); margin-top:0.15rem; line-height:1.4; }
+  .it-dur { display:inline-block; font-size:0.68rem; font-weight:600; background:rgba(0,0,0,0.05); padding:0.1rem 0.4rem; border-radius:4px; color:var(--muted); margin-top:0.3rem; }
+
+  /* HISTORY */
+  .history-card { background:var(--sand); border-radius:10px; padding:1rem 1.1rem; margin-bottom:0.75rem; border-left:3px solid var(--ocean); }
+  .history-year { font-size:0.72rem; font-weight:700; color:var(--ocean); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.25rem; }
+  .history-title { font-weight:600; font-size:0.92rem; margin-bottom:0.3rem; color:var(--deep); }
+  .history-text { font-size:0.82rem; line-height:1.6; color:#3a4a4e; }
 
   /* Leaflet popup */
-  .leaflet-popup-content-wrapper {
-    background: var(--deep); color: white;
-    border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.25);
-  }
-  .leaflet-popup-tip { background: var(--deep); }
-  .leaflet-popup-content { margin: 10px 14px; font-family: 'DM Sans', sans-serif; }
-  .popup-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.2rem; }
-  .popup-cat { font-size: 0.75rem; color: rgba(255,255,255,0.65); }
+  .leaflet-popup-content-wrapper { background:var(--deep); color:white; border-radius:10px; }
+  .leaflet-popup-tip { background:var(--deep); }
+  .leaflet-popup-content { margin:10px 14px; font-family:'DM Sans',sans-serif; }
+  .popup-name { font-weight:600; font-size:0.9rem; margin-bottom:0.2rem; }
+  .popup-cat { font-size:0.75rem; color:rgba(255,255,255,0.6); }
 
-  /* Category colors */
-  .cat-beach  { background: #D4EDFE; color: #1E6B8A; }
-  .cat-nature { background: #D4F5E4; color: #1A7A4A; }
-  .cat-bio    { background: #D0FAF0; color: #0B7A60; }
-  .cat-history{ background: #FCE8D8; color: #A04A20; }
-  .cat-food   { background: #FFF0D0; color: #8A5A10; }
-
-  .num-beach  { background: #1E6B8A; color: white; }
-  .num-nature { background: #1A7A4A; color: white; }
-  .num-bio    { background: #0B7A60; color: white; }
-  .num-history{ background: #A04A20; color: white; }
-  .num-food   { background: #8A5A10; color: white; }
-
-  .dot-beach  { background: #1E6B8A; }
-  .dot-nature { background: #1A7A4A; }
-  .dot-bio    { background: #0B7A60; }
-  .dot-history{ background: #A04A20; }
-  .dot-food   { background: #8A5A10; }
-
-  /* Responsive */
-  @media (max-width: 680px) {
-    .sidebar { width: 100%; min-width: unset; }
-    .app { flex-direction: column; height: auto; }
-    #map { min-height: 300px; }
-    .detail-panel { width: 100%; }
-  }
+  .cat-beach   { background:#D4EDFE; color:#1E6B8A; }
+  .cat-nature  { background:#D4F5E4; color:#1A7A4A; }
+  .cat-bio     { background:#D0FAF0; color:#0B7A60; }
+  .cat-history { background:#FCE8D8; color:#A04A20; }
+  .num-beach   { background:#1E6B8A; color:white; }
+  .num-nature  { background:#1A7A4A; color:white; }
+  .num-bio     { background:#0B7A60; color:white; }
+  .num-history { background:#A04A20; color:white; }
+  .dot-beach   { background:#1E6B8A; }
+  .dot-nature  { background:#1A7A4A; }
+  .dot-bio     { background:#0B7A60; }
+  .dot-history { background:#A04A20; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">
-    Vieques
-    <span>Island Tour Guide</span>
-  </div>
+  <div class="logo">Vieques<span>Island Tour Guide</span></div>
   <nav>
     <button class="active" onclick="showView('stops')">Stops</button>
     <button onclick="showView('itinerary')">Itinerary</button>
@@ -327,14 +180,11 @@
 </header>
 
 <div class="app">
-  <!-- SIDEBAR -->
   <div class="sidebar">
-
-    <!-- STOPS VIEW -->
     <div class="view active" id="view-stops">
       <div class="stops-header">
         <h2>Tour Stops</h2>
-        <p>18 curated stops across beaches, history, nature & the bioluminescent bay.</p>
+        <p>18 curated stops across beaches, history, nature &amp; the bioluminescent bay.</p>
       </div>
       <div class="filter-row">
         <button class="filter-btn on" onclick="toggleFilter(this,'all')">All</button>
@@ -346,260 +196,344 @@
       <div class="stop-list" id="stop-list"></div>
     </div>
 
-    <!-- ITINERARY VIEW -->
     <div class="view" id="view-itinerary">
-      <div class="itinerary-view">
+      <div class="scroll-view">
         <h2>Suggested Itinerary</h2>
         <p>A 2-day tour covering Vieques' top highlights — from sunrise beaches to the glowing bay at night.</p>
         <div id="itinerary-list"></div>
       </div>
     </div>
 
-    <!-- HISTORY VIEW -->
     <div class="view" id="view-history">
-      <div class="history-view">
+      <div class="scroll-view">
         <h2>Island History</h2>
         <div id="history-list"></div>
       </div>
     </div>
+  </div>
 
-  </div><!-- /sidebar -->
-
-  <!-- MAP -->
   <div id="map"></div>
 
-  <!-- DETAIL PANEL -->
   <div class="detail-panel" id="detail-panel">
-    <button class="detail-close" onclick="document.getElementById('detail-panel').classList.remove('open'); selectedStop=null;">✕</button>
+    <button id="close-btn">&#10005;</button>
     <div id="detail-content"></div>
   </div>
 </div>
 
 <script>
-// =============================================
-// DATA
-// =============================================
+// Wire up close button immediately — no onclick attribute needed
+document.getElementById('close-btn').addEventListener('click', function() {
+  document.getElementById('detail-panel').classList.remove('open');
+  selectedStop = null;
+  renderStops();
+});
+
+// ── DATA ──────────────────────────────────────────────────────────────
 const stops = [
   {
-    id: 1, name: "Sun Bay (Sombé)", cat: "beach",
-    lat: 18.1057, lng: -65.4380,
-    tagline: "The island's most beloved public beach",
-    desc: "Sun Bay is the crown jewel of Vieques' public beaches — a sweeping mile-long crescent of golden sand backed by sea grape trees. The calm, shallow turquoise waters make it ideal for swimming and snorkeling. A small camping area makes it a favorite for overnight visitors.",
-    tips: ["Arrive early on weekends to claim a good spot", "Shade under sea grape trees along the eastern end", "Vendors sell drinks on busier days", "Walk east toward Media Luna for quieter sands"],
-    hours: "7am – 6pm", duration: "2–3 hrs", best: "Morning"
+    id:1, name:"Sun Bay (Sombé)", cat:"beach",
+    lat:18.1057, lng:-65.4380,
+    photos:[
+      "https://live.staticflickr.com/65535/51737221278_3c2d3df5e5_b.jpg",
+      "https://live.staticflickr.com/65535/49756036918_5c2be4e3f3_b.jpg"
+    ],
+    tagline:"The island's most beloved public beach",
+    desc:"Sun Bay is the crown jewel of Vieques' public beaches — a sweeping mile-long crescent of golden sand backed by sea grape trees. The calm, shallow turquoise waters make it ideal for swimming and snorkeling.",
+    tips:["Arrive early on weekends to claim a spot","Shade under sea grape trees along the eastern end","Walk east toward Media Luna for quieter sands"],
+    hours:"7am – 6pm", duration:"2–3 hrs", best:"Morning"
   },
   {
-    id: 2, name: "Media Luna Beach", cat: "beach",
-    lat: 18.1048, lng: -65.4313,
-    tagline: "Secluded crescent with reef snorkeling",
-    desc: "Just a short walk east from Sun Bay, Media Luna offers a quieter escape with excellent snorkeling off the rocky edges of its small crescent bay. The reef close to shore shelters colorful fish and the occasional sea turtle. No facilities — pack in what you need.",
-    tips: ["Bring snorkel gear — the reef is right off the beach", "Often nearly empty on weekdays", "Only accessible on foot from Sun Bay"],
-    hours: "Dawn – Dusk", duration: "1–2 hrs", best: "Morning"
+    id:2, name:"Media Luna Beach", cat:"beach",
+    lat:18.1048, lng:-65.4313,
+    photos:[
+      "https://live.staticflickr.com/65535/49756036918_5c2be4e3f3_b.jpg"
+    ],
+    tagline:"Secluded crescent with reef snorkeling",
+    desc:"A short walk east from Sun Bay, Media Luna offers quiet escape with excellent snorkeling off the rocky edges. The reef shelters colorful fish and the occasional sea turtle.",
+    tips:["Bring snorkel gear — reef is right off the beach","Often nearly empty on weekdays","Only accessible on foot from Sun Bay"],
+    hours:"Dawn – Dusk", duration:"1–2 hrs", best:"Morning"
   },
   {
-    id: 3, name: "Navio Beach", cat: "beach",
-    lat: 18.1038, lng: -65.4246,
-    tagline: "Wild & remote Atlantic-facing beach",
-    desc: "One of the most remote beaches on Vieques' south coast, Navio requires a short hike through brush to reach. The reward is a wild, undeveloped stretch with dramatic waves, driftwood, and virtually no crowds. Swimming can be rough — best for experienced swimmers.",
-    tips: ["4WD recommended for the road", "Bring everything you need — zero facilities", "Excellent for shell collecting", "Not recommended for children due to surf"],
-    hours: "Dawn – Dusk", duration: "1–2 hrs", best: "Afternoon"
+    id:3, name:"Navio Beach", cat:"beach",
+    lat:18.1038, lng:-65.4246,
+    photos:[
+      "https://live.staticflickr.com/65535/49757812542_1c1a1e9fe8_b.jpg"
+    ],
+    tagline:"Wild & remote Atlantic-facing beach",
+    desc:"One of the most remote beaches on Vieques' south coast. Navio requires a short hike through brush — the reward is a wild, undeveloped stretch with dramatic waves and virtually no crowds.",
+    tips:["4WD recommended for the road","Bring everything — zero facilities","Not recommended for children due to surf"],
+    hours:"Dawn – Dusk", duration:"1–2 hrs", best:"Afternoon"
   },
   {
-    id: 4, name: "Mosquito Pier", cat: "nature",
-    lat: 18.1400, lng: -65.4700,
-    tagline: "Snorkeling & historic military pier",
-    desc: "This decommissioned pier dating from the US Navy era is now a snorkeling hotspot. The pilings are encrusted with coral and sponges, attracting schools of fish, rays, and nurse sharks. The surrounding flats glow at dusk with bioluminescence even outside the main bay.",
-    tips: ["Morning snorkeling is best for visibility", "Watch for rays in the shallow flats", "Photographing the pier at sunset is spectacular", "Shallow enough to wade from shore"],
-    hours: "Dawn – Dusk", duration: "1–2 hrs", best: "Morning or Sunset"
+    id:4, name:"Mosquito Pier", cat:"nature",
+    lat:18.1400, lng:-65.4700,
+    photos:[
+      "https://live.staticflickr.com/65535/49756036918_5c2be4e3f3_b.jpg"
+    ],
+    tagline:"Snorkeling & historic military pier",
+    desc:"This decommissioned Navy-era pier is a snorkeling hotspot. The pilings are encrusted with coral and sponges, attracting schools of fish, rays, and nurse sharks.",
+    tips:["Morning snorkeling is best for visibility","Watch for rays in the shallow flats","Spectacular sunset photography spot"],
+    hours:"Dawn – Dusk", duration:"1–2 hrs", best:"Morning or Sunset"
   },
   {
-    id: 5, name: "Bioluminescent Bay (Mosquito Bay)", cat: "bio",
-    lat: 18.1258, lng: -65.4648,
-    tagline: "The brightest bio bay in the world",
-    desc: "Mosquito Bay holds the Guinness World Record as the brightest bioluminescent bay on Earth. Millions of single-celled dinoflagellates (Pyrodinium bahamense) light up the water with an ethereal blue-green glow when disturbed. Tours by kayak or electric pontoon boat are the only legal access.",
-    tips: ["No-moon nights (new moon ±3 days) are the brightest", "Kayak tours feel more magical than pontoon", "Book tours in advance — they fill up quickly", "Don't apply sunscreen before going in", "Swimming is allowed by kayak tour only"],
-    hours: "Tours from 7pm", duration: "2 hrs", best: "New moon nights"
+    id:5, name:"Bioluminescent Bay", cat:"bio",
+    lat:18.1258, lng:-65.4648,
+    photos:[
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Mosquito_Bay_Vieques.jpg/1280px-Mosquito_Bay_Vieques.jpg",
+      "https://live.staticflickr.com/65535/49756566301_e6c3c70e3b_b.jpg"
+    ],
+    tagline:"The brightest bio bay in the world",
+    desc:"Mosquito Bay holds the Guinness World Record as the brightest bioluminescent bay on Earth. Millions of dinoflagellates light up the water with an ethereal blue-green glow when disturbed.",
+    tips:["No-moon nights are the brightest","Kayak tours feel most magical","Book tours well in advance","Don't apply sunscreen before entering the water"],
+    hours:"Tours from 7pm", duration:"2 hrs", best:"New moon nights"
   },
   {
-    id: 6, name: "El Fortín Conde de Mirasol", cat: "history",
-    lat: 18.1516, lng: -65.4434,
-    tagline: "Last Spanish fort built in the Americas",
-    desc: "Perched on a hill above Isabel Segunda, El Fortín was constructed between 1845 and 1865 and is considered the last military fortification built by Spain in the New World. Today it houses the Vieques Art & History Museum with exhibits on Taíno culture, Spanish colonization, and the decades-long struggle against the US Navy.",
-    tips: ["Open Tue–Sun, small admission fee", "Best panoramic views of the north coast from the ramparts", "The museum's Navy-era exhibit is particularly moving", "Combine with a walk through Isabel Segunda"],
-    hours: "Tue–Sun 10am–4pm", duration: "1–1.5 hrs", best: "Midday"
+    id:6, name:"El Fortín Conde de Mirasol", cat:"history",
+    lat:18.1516, lng:-65.4434,
+    photos:[
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Fort_Count_Mirasol_Vieques_Puerto_Rico.jpg/1280px-Fort_Count_Mirasol_Vieques_Puerto_Rico.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Fortin_Conde_de_Mirasol_de_Vieques.JPG/1280px-Fortin_Conde_de_Mirasol_de_Vieques.JPG"
+    ],
+    tagline:"Last Spanish fort built in the Americas",
+    desc:"Built 1845–1865, El Fortín is the last military fortification built by Spain in the New World. Today it houses the Vieques Art & History Museum with exhibits on Taíno culture and the Navy struggle.",
+    tips:["Open Tue–Sun, small admission fee","Best panoramic views of the north coast from the ramparts","The Navy-era exhibit is particularly moving"],
+    hours:"Tue–Sun 10am–4pm", duration:"1–1.5 hrs", best:"Midday"
   },
   {
-    id: 7, name: "Isabel Segunda", cat: "history",
-    lat: 18.1527, lng: -65.4440,
-    tagline: "Vieques' vibrant main town",
-    desc: "The island's largest town is a colorful grid of pastel buildings, local restaurants, and the ferry terminal. The main plaza (parque) is a hub of island life — surrounded by the church, old government buildings, and the fort. Explore the waterfront, grab a cold beer at a colmado, or browse local art.",
-    tips: ["The Sunday plaza market is worth catching", "Locals point you to the best frituras (fried snacks)", "Most car rentals and golf cart rentals are here", "Ask about the mural project around town"],
-    hours: "Always open", duration: "1–2 hrs", best: "Morning or Evening"
+    id:7, name:"Isabel Segunda", cat:"history",
+    lat:18.1527, lng:-65.4440,
+    photos:[
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Vieques_-_panoramio.jpg/1280px-Vieques_-_panoramio.jpg"
+    ],
+    tagline:"Vieques' vibrant main town",
+    desc:"The island's largest town is a colorful grid of pastel buildings, local restaurants, and the ferry terminal. The main plaza is a hub of island life surrounded by the church and old government buildings.",
+    tips:["The Sunday plaza market is worth catching","Most car and golf cart rentals are here","Ask about the mural project around town"],
+    hours:"Always open", duration:"1–2 hrs", best:"Morning or Evening"
   },
   {
-    id: 8, name: "Esperanza Malecón", cat: "history",
-    lat: 18.0946, lng: -65.4714,
-    tagline: "Charming waterfront village strip",
-    desc: "Esperanza is Vieques' southern village — a relaxed strip of guesthouses, restaurants, and bars along a concrete waterfront promenade overlooking a calm bay. Vendors sell fresh fish at dusk, fishing boats bob in the harbor, and the whole town seems to slow to a Caribbean rhythm.",
-    tips: ["Coamó reef is visible from the waterfront", "Sunset from the malecón is stunning", "Most bio bay tour operators are based here", "Several excellent restaurants for fresh seafood"],
-    hours: "Always open", duration: "1–2 hrs", best: "Sunset & Evening"
+    id:8, name:"Esperanza Malecón", cat:"history",
+    lat:18.0946, lng:-65.4714,
+    photos:[
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Esperanza%2C_Vieques.jpg/1280px-Esperanza%2C_Vieques.jpg"
+    ],
+    tagline:"Charming waterfront village strip",
+    desc:"Esperanza is Vieques' southern village — a relaxed strip of guesthouses, restaurants, and bars along a waterfront promenade overlooking a calm bay.",
+    tips:["Sunset from the malecón is stunning","Most bio bay tour operators are based here","Several excellent restaurants for fresh seafood"],
+    hours:"Always open", duration:"1–2 hrs", best:"Sunset & Evening"
   },
   {
-    id: 9, name: "Vieques National Wildlife Refuge", cat: "nature",
-    lat: 18.1100, lng: -65.3900,
-    tagline: "3,100 acres of wild eastern lands",
-    desc: "The US Fish & Wildlife Service manages the eastern two-thirds of Vieques as a protected refuge — former Navy bombing range. Now open to visitors, it contains pristine beaches, dry forest, mangroves, and extraordinary biodiversity. Over 200 bird species have been recorded here.",
-    tips: ["A 4WD vehicle is required for most trails", "Green Beach on the western refuge is excellent", "Bird watching is excellent October–March", "Pick up a refuge map at the entrance station"],
-    hours: "Gates open sunrise to sunset", duration: "Half day", best: "Early morning"
+    id:9, name:"Vieques Wildlife Refuge", cat:"nature",
+    lat:18.1100, lng:-65.3900,
+    photos:[
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Vieques_NWR.jpg/1280px-Vieques_NWR.jpg"
+    ],
+    tagline:"3,100 acres of wild eastern lands",
+    desc:"The US Fish & Wildlife Service manages the eastern two-thirds of Vieques as a protected refuge — former Navy bombing range — with pristine beaches, dry forest, mangroves, and 200+ bird species.",
+    tips:["4WD required for most trails","Bird watching is excellent October–March","Pick up a refuge map at the entrance station"],
+    hours:"Sunrise to sunset", duration:"Half day", best:"Early morning"
   },
   {
-    id: 10, name: "Red Beach (Caracas)", cat: "beach",
-    lat: 18.1100, lng: -65.4200,
-    tagline: "Iconic calm bay with vivid blue water",
-    desc: "One of the most photographed beaches on Vieques, Red Beach sits inside a sheltered cove in the Wildlife Refuge. The water is impossibly clear in shades of aqua and blue, ideal for snorkeling and paddleboarding. The reddish tinge of the surrounding hills gives the beach its name.",
-    tips: ["Some of the best snorkeling on the island", "Road requires 4WD", "Often less crowded than Sun Bay", "No facilities — bring water and food"],
-    hours: "Dawn – Dusk (Refuge hours)", duration: "2–3 hrs", best: "Morning"
+    id:10, name:"Red Beach (Caracas)", cat:"beach",
+    lat:18.1100, lng:-65.4200,
+    photos:[
+      "https://live.staticflickr.com/65535/49756559256_2e31be2226_b.jpg",
+      "https://live.staticflickr.com/65535/49756036918_5c2be4e3f3_b.jpg"
+    ],
+    tagline:"Iconic calm bay with vivid blue water",
+    desc:"One of the most photographed beaches on Vieques, Red Beach sits inside a sheltered cove in the Wildlife Refuge. The water is impossibly clear — ideal for snorkeling and paddleboarding.",
+    tips:["Some of the best snorkeling on the island","Road requires 4WD","No facilities — bring water and food"],
+    hours:"Dawn – Dusk (Refuge hours)", duration:"2–3 hrs", best:"Morning"
   },
   {
-    id: 11, name: "Blue Beach (Bahía de la Chiva)", cat: "beach",
-    lat: 18.1050, lng: -65.4050,
-    tagline: "Seven coves of crystalline water",
-    desc: "Blue Beach is actually a series of seven small coves separated by rocky headlands inside the Wildlife Refuge. Locals consider it the most beautiful beach on the island — the water an electric shade of cobalt and turquoise. Different coves suit different moods: calm snorkeling, wave watching, solitude.",
-    tips: ["Explore multiple coves along the beach", "Bring snorkel gear and plenty of water", "Rocky path between coves requires careful footing", "Gets windy in the afternoon — ideal for morning visits"],
-    hours: "Dawn – Dusk (Refuge hours)", duration: "3–4 hrs", best: "Morning"
+    id:11, name:"Blue Beach (La Chiva)", cat:"beach",
+    lat:18.1050, lng:-65.4050,
+    photos:[
+      "https://live.staticflickr.com/65535/49757127458_3f7dd6fd3f_b.jpg",
+      "https://live.staticflickr.com/65535/49756559256_2e31be2226_b.jpg"
+    ],
+    tagline:"Seven coves of crystalline water",
+    desc:"Blue Beach is a series of seven small coves separated by rocky headlands inside the Wildlife Refuge. Locals consider it the most beautiful beach on the island — water an electric shade of cobalt and turquoise.",
+    tips:["Explore multiple coves along the beach","Bring snorkel gear and plenty of water","Gets windy in the afternoon — best for morning visits"],
+    hours:"Dawn – Dusk (Refuge hours)", duration:"3–4 hrs", best:"Morning"
   },
   {
-    id: 12, name: "Green Beach", cat: "beach",
-    lat: 18.1320, lng: -65.5190,
-    tagline: "Remote western tip with channel views",
-    desc: "At the far western end of the island, Green Beach faces the channel between Vieques and the Puerto Rico mainland. The calm, shallow water makes for excellent swimming and snorkeling along the rocky edges. On a clear day you can see the El Yunque rainforest and Culebra island from the shore.",
-    tips: ["Cross the channel to see manatees and rays", "The sunset here is extraordinary", "Requires navigation through a military gate — check access hours", "Very isolated — the solitude is part of the appeal"],
-    hours: "Dawn – Dusk", duration: "2–3 hrs", best: "Late afternoon"
+    id:12, name:"Green Beach", cat:"beach",
+    lat:18.1320, lng:-65.5190,
+    photos:[
+      "https://live.staticflickr.com/65535/49756036918_5c2be4e3f3_b.jpg"
+    ],
+    tagline:"Remote western tip with channel views",
+    desc:"At the far western end of the island, Green Beach faces the channel between Vieques and Puerto Rico. On a clear day you can see El Yunque rainforest and Culebra island from the shore.",
+    tips:["The sunset here is extraordinary","Calm shallow water great for swimming","Very isolated — solitude is part of the appeal"],
+    hours:"Dawn – Dusk", duration:"2–3 hrs", best:"Late afternoon"
   },
   {
-    id: 13, name: "Playa Negra (Black Sand Beach)", cat: "beach",
-    lat: 18.1490, lng: -65.4550,
-    tagline: "Unusual volcanic black sand beach",
-    desc: "One of the few black sand beaches in Puerto Rico, Playa Negra sits on the north coast near Isabel Segunda. The dark mineral sand contrasts strikingly with the turquoise water. The beach is locally favored and often empty of tourists, offering a more authentic Vieques experience.",
-    tips: ["One of the most unique beaches on the island", "Great for photos with the color contrast", "Some current — be cautious swimming", "Locals often fish from the shore here"],
-    hours: "Always open", duration: "1 hr", best: "Any time"
+    id:13, name:"Playa Negra (Black Sand)", cat:"beach",
+    lat:18.1490, lng:-65.4550,
+    photos:[
+      "https://live.staticflickr.com/65535/49756036918_5c2be4e3f3_b.jpg"
+    ],
+    tagline:"Unusual volcanic black sand beach",
+    desc:"One of the few black sand beaches in Puerto Rico, Playa Negra sits on the north coast near Isabel Segunda. The dark mineral sand contrasts strikingly with the turquoise water.",
+    tips:["One of the most unique beaches on the island","Great for photos with the color contrast","Locals often fish from the shore here"],
+    hours:"Always open", duration:"1 hr", best:"Any time"
   },
   {
-    id: 14, name: "Punta Arenas Lighthouse", cat: "history",
-    lat: 18.1350, lng: -65.5240,
-    tagline: "Historic 1896 lighthouse at land's end",
-    desc: "The Punta Mulas lighthouse, built in 1896, guards the western tip of Vieques from a coral bluff. Now decommissioned, the elegant Spanish colonial structure sits surrounded by cacti and windswept scrub. The views across the channel toward Ceiba are among the best on the island.",
-    tips: ["Located at the ferry terminal in Isabel II — easy to visit", "Grounds open but structure may be closed", "Gorgeous golden hour photography spot", "Combine with a stop at the market in town"],
-    hours: "Grounds always open", duration: "30 min", best: "Sunset"
+    id:14, name:"Punta Mulas Lighthouse", cat:"history",
+    lat:18.1562, lng:-65.4442,
+    photos:[
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Faro_Punta_Mulas_Vieques.jpg/1280px-Faro_Punta_Mulas_Vieques.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Punta_mulas_lighthouse.jpg/1280px-Punta_mulas_lighthouse.jpg"
+    ],
+    tagline:"Historic 1896 lighthouse at land's end",
+    desc:"The Punta Mulas lighthouse, built in 1896, guards the northern shore from a coral bluff. The elegant Spanish colonial structure sits surrounded by cacti and windswept scrub with beautiful channel views.",
+    tips:["Located near the ferry terminal","Grounds open but structure may be closed","Gorgeous golden hour photography spot"],
+    hours:"Grounds always open", duration:"30 min", best:"Sunset"
   },
   {
-    id: 15, name: "La Laguna (Kiani Lagoon)", cat: "nature",
-    lat: 18.1030, lng: -65.4720,
-    tagline: "Mangrove lagoon kayaking & birding",
-    desc: "A protected mangrove lagoon near Esperanza, La Laguna (also called Kiani) is a sanctuary for birds and marine life. Kayaking through the narrow mangrove channels at dawn is one of Vieques' most peaceful experiences. Herons, kingfishers, and pelicans are regular sightings.",
-    tips: ["Kayak rentals available in Esperanza", "Dawn paddling has the best birdlife", "Look for juvenile barracuda in the lagoon", "A great complement to the bio bay at night"],
-    hours: "Dawn – Dusk", duration: "2 hrs", best: "Early morning"
+    id:15, name:"La Laguna (Kiani Lagoon)", cat:"nature",
+    lat:18.1030, lng:-65.4720,
+    photos:[
+      "https://live.staticflickr.com/65535/49757812542_1c1a1e9fe8_b.jpg"
+    ],
+    tagline:"Mangrove lagoon kayaking & birding",
+    desc:"A protected mangrove lagoon near Esperanza. Kayaking through the narrow mangrove channels at dawn is one of Vieques' most peaceful experiences. Herons, kingfishers, and pelicans are regular sightings.",
+    tips:["Kayak rentals available in Esperanza","Dawn paddling has the best birdlife","Great complement to the bio bay at night"],
+    hours:"Dawn – Dusk", duration:"2 hrs", best:"Early morning"
   },
   {
-    id: 16, name: "Cerro Ventana (Window Hill)", cat: "nature",
-    lat: 18.1350, lng: -65.4600,
-    tagline: "Natural rock window panorama",
-    desc: "A short hike through dry forest leads to a natural rock formation with a 'window' opening that frames a breathtaking view of the island's interior and both coasts. This is one of Vieques' best hidden gems — few tourists make the effort, so you'll likely have it to yourself.",
-    tips: ["A local guide is helpful to find the trailhead", "Bring water — no shade on upper section", "Best light for the view is mid-morning", "The rock formation itself is geologically fascinating"],
-    hours: "Dawn – Dusk", duration: "2–3 hrs", best: "Morning"
+    id:16, name:"Cerro Ventana (Window Hill)", cat:"nature",
+    lat:18.1350, lng:-65.4600,
+    photos:[
+      "https://live.staticflickr.com/65535/49756036918_5c2be4e3f3_b.jpg"
+    ],
+    tagline:"Natural rock window panorama",
+    desc:"A short hike through dry forest leads to a natural rock formation with a 'window' opening that frames a breathtaking view of the island's interior and both coasts.",
+    tips:["A local guide helps find the trailhead","Bring water — no shade on upper section","Best light for the view is mid-morning"],
+    hours:"Dawn – Dusk", duration:"2–3 hrs", best:"Morning"
   },
   {
-    id: 17, name: "Taíno Cultural Site", cat: "history",
-    lat: 18.1200, lng: -65.4900,
-    tagline: "Evidence of the island's first inhabitants",
-    desc: "Vieques was inhabited by the Taíno people for centuries before European contact. Several sites around the island preserve petroglyphs and artifacts from this culture. The museum at El Fortín houses recovered items and explains the Taíno heritage that still echoes in local place names and traditions.",
-    tips: ["The fort museum covers this in detail", "Some petroglyphs are accessible with a local guide", "Ask at the tourist office about current site access", "The name 'Vieques' likely derives from a Taíno word"],
-    hours: "Via museum Tue–Sun", duration: "45 min", best: "Anytime"
+    id:17, name:"Taíno Cultural Site", cat:"history",
+    lat:18.1200, lng:-65.4900,
+    photos:[
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Fortin_Conde_de_Mirasol_de_Vieques.JPG/1280px-Fortin_Conde_de_Mirasol_de_Vieques.JPG"
+    ],
+    tagline:"Evidence of the island's first inhabitants",
+    desc:"Vieques was inhabited by the Taíno for centuries before European contact. The museum at El Fortín houses recovered artifacts and explains the Taíno heritage still echoed in local place names.",
+    tips:["The fort museum covers this in detail","Some petroglyphs accessible with a local guide","The name 'Vieques' likely derives from a Taíno word"],
+    hours:"Via museum Tue–Sun", duration:"45 min", best:"Anytime"
   },
   {
-    id: 18, name: "Playa La Plata (Secret Beach)", cat: "beach",
-    lat: 18.1080, lng: -65.4600,
-    tagline: "The island's best-kept secret",
-    desc: "La Plata is arguably the most beautiful undiscovered beach on Vieques — a small crescent of powder-white sand with calm, clear water, accessible only via a rough track and a short walk. There are no facilities, no crowds, and no noise except waves. Locals protect it fiercely.",
-    tips: ["Exact location is intentionally vague — ask a local you trust", "4WD is essential and even then it's a walk in", "Pack in everything and pack out all trash", "Worth the effort for a truly pristine experience"],
-    hours: "Dawn – Dusk", duration: "2–3 hrs", best: "Morning"
+    id:18, name:"Playa La Plata (Secret Beach)", cat:"beach",
+    lat:18.1080, lng:-65.4600,
+    photos:[
+      "https://live.staticflickr.com/65535/49756559256_2e31be2226_b.jpg"
+    ],
+    tagline:"The island's best-kept secret",
+    desc:"La Plata is a small crescent of powder-white sand with calm, clear water, accessible only via a rough track and short walk. No facilities, no crowds — just waves.",
+    tips:["Ask a local you trust for the exact location","4WD is essential","Pack in everything and pack out all trash"],
+    hours:"Dawn – Dusk", duration:"2–3 hrs", best:"Morning"
   }
 ];
 
 const itinerary = [
-  { day: 1, time: "7:00 AM",  stopId: 14, note: "Watch sunrise from the lighthouse before town wakes up" },
-  { day: 1, time: "8:30 AM",  stopId: 7,  note: "Breakfast in Isabel II, pick up your rental car" },
-  { day: 1, time: "10:00 AM", stopId: 6,  note: "Explore the fort and museum — best history on the island" },
-  { day: 1, time: "12:00 PM", stopId: 13, note: "Quick stop at the black sand beach before heading east" },
-  { day: 1, time: "1:00 PM",  stopId: 11, note: "Swim and snorkel in the seven coves — bring lunch" },
-  { day: 1, time: "4:00 PM",  stopId: 10, note: "Afternoon snorkel at Red Beach — best visibility" },
-  { day: 1, time: "6:30 PM",  stopId: 8,  note: "Sunset drinks and dinner on the Esperanza malecón" },
-  { day: 1, time: "8:00 PM",  stopId: 5,  note: "Bio bay kayak tour — book in advance! New moon best" },
-  { day: 2, time: "6:30 AM",  stopId: 15, note: "Dawn kayak through the mangrove lagoon for birds" },
-  { day: 2, time: "9:00 AM",  stopId: 1,  note: "Morning swim at Sun Bay before the crowds arrive" },
-  { day: 2, time: "10:30 AM", stopId: 2,  note: "Snorkel the reef at Media Luna" },
-  { day: 2, time: "12:30 PM", stopId: 17, note: "Learn about the Taíno people and island heritage" },
-  { day: 2, time: "2:00 PM",  stopId: 16, note: "Hike to the natural rock window for panoramic views" },
-  { day: 2, time: "4:30 PM",  stopId: 12, note: "Green Beach for the best sunset on the island" }
+  {day:1,time:"7:00 AM", stopId:14,note:"Watch sunrise from the lighthouse before town wakes up"},
+  {day:1,time:"8:30 AM", stopId:7, note:"Breakfast in Isabel II, pick up your rental car"},
+  {day:1,time:"10:00 AM",stopId:6, note:"Explore the fort and museum — best history on the island"},
+  {day:1,time:"12:00 PM",stopId:13,note:"Quick stop at the black sand beach before heading east"},
+  {day:1,time:"1:00 PM", stopId:11,note:"Swim and snorkel in the seven coves — bring lunch"},
+  {day:1,time:"4:00 PM", stopId:10,note:"Afternoon snorkel at Red Beach — best visibility"},
+  {day:1,time:"6:30 PM", stopId:8, note:"Sunset drinks and dinner on the Esperanza malecón"},
+  {day:1,time:"8:00 PM", stopId:5, note:"Bio bay kayak tour — book in advance!"},
+  {day:2,time:"6:30 AM", stopId:15,note:"Dawn kayak through the mangrove lagoon for birds"},
+  {day:2,time:"9:00 AM", stopId:1, note:"Morning swim at Sun Bay before the crowds arrive"},
+  {day:2,time:"10:30 AM",stopId:2, note:"Snorkel the reef at Media Luna"},
+  {day:2,time:"12:30 PM",stopId:17,note:"Learn about the Taíno people and island heritage"},
+  {day:2,time:"2:00 PM", stopId:16,note:"Hike to the natural rock window for panoramic views"},
+  {day:2,time:"4:30 PM", stopId:12,note:"Green Beach for the best sunset on the island"}
 ];
 
 const historyItems = [
-  { year: "Pre-1493", title: "Taíno Settlement", text: "The Taíno people inhabited Vieques for centuries, calling the island 'Bieque' meaning small island or crab. They lived by fishing, farming, and ceramics. Petroglyphs and artifacts across the island still witness their presence." },
-  { year: "1493", title: "European Contact", text: "Columbus passed near Vieques on his second voyage. Spanish colonization brought devastating consequences for the Taíno population through disease, forced labor, and violence. By the mid-1500s the indigenous population was largely gone." },
-  { year: "1600s–1700s", title: "Colonial Struggles", text: "Spain, England, France, and Denmark all contested Vieques during this era. The island changed hands repeatedly and was used as a base for corsairs and smugglers. Formal colonization by Spain began in earnest in the 1820s." },
-  { year: "1845–1865", title: "Fort Construction", text: "Spain built El Fortín Conde de Mirasol on the island's highest northern point — the last Spanish military fort constructed in the Americas. It was never used in combat but symbolized Spain's commitment to defending its remaining Caribbean territories." },
-  { year: "1898", title: "Transfer to United States", text: "Following the Spanish-American War, Puerto Rico (and Vieques) passed to US control. Vieques entered a new era of sugar cane agriculture and growing US military interest in the island's strategic location." },
-  { year: "1941", title: "Navy Takeover", text: "During World War II, the US Navy expropriated approximately two-thirds of Vieques land, displacing thousands of residents to a narrow central strip. The Navy used the island for live-fire training exercises for decades, leaving unexploded ordnance across the eastern and western ranges." },
-  { year: "1999–2003", title: "Navy Out Campaign", text: "The accidental killing of civilian guard David Sanes Rodriguez by a misdirected bomb in 1999 galvanized massive protests by Vieques residents and Puerto Ricans worldwide. After sustained civil disobedience and international attention, the US Navy ceased operations and left the island in 2003." },
-  { year: "2003–Present", title: "Wildlife Refuge & Recovery", text: "The former Navy land became the Vieques National Wildlife Refuge, managed by US Fish & Wildlife. Cleanup of unexploded ordnance continues. The island has developed a thriving eco-tourism economy, though residents continue to push for more rapid environmental remediation and health studies." },
-  { year: "Present", title: "Resilience & Culture", text: "Today Vieques is known for its extraordinary natural beauty, bioluminescent bay, wild beaches, and a strong, proud community culture. Despite Hurricane Maria's devastation in 2017 — and a slower recovery than mainland Puerto Rico — the island has rebuilt and remains one of the Caribbean's most special destinations." }
+  {year:"Pre-1493",title:"Taíno Settlement",text:"The Taíno people inhabited Vieques for centuries, calling the island 'Bieque.' They lived by fishing, farming, and ceramics. Petroglyphs and artifacts across the island still witness their presence."},
+  {year:"1493",title:"European Contact",text:"Columbus passed near Vieques on his second voyage. Spanish colonization brought devastating consequences for the Taíno population through disease and forced labor."},
+  {year:"1600s–1700s",title:"Colonial Struggles",text:"Spain, England, France, and Denmark all contested Vieques. The island changed hands repeatedly and was used as a base for corsairs and smugglers."},
+  {year:"1845–1865",title:"Fort Construction",text:"Spain built El Fortín Conde de Mirasol — the last Spanish military fort constructed in the Americas — on the island's highest northern point."},
+  {year:"1898",title:"Transfer to United States",text:"Following the Spanish-American War, Puerto Rico (and Vieques) passed to US control, entering a new era of sugar cane agriculture and growing military interest."},
+  {year:"1941",title:"Navy Takeover",text:"During World War II, the US Navy expropriated two-thirds of Vieques land, displacing thousands of residents for decades of live-fire training exercises."},
+  {year:"1999–2003",title:"Navy Out Campaign",text:"The accidental killing of civilian guard David Sanes Rodriguez in 1999 galvanized massive protests. After sustained civil disobedience, the US Navy left in 2003."},
+  {year:"2003–Present",title:"Wildlife Refuge & Recovery",text:"The former Navy land became the Vieques National Wildlife Refuge. Cleanup of unexploded ordnance continues while eco-tourism has grown into the island's main economy."},
+  {year:"Present",title:"Resilience & Culture",text:"Despite Hurricane Maria's devastation in 2017, Vieques has rebuilt and remains one of the Caribbean's most special destinations — known for wild beaches, bio bay, and proud community culture."}
 ];
 
-// =============================================
-// STATE
-// =============================================
-let activeFilter = 'all';
-let selectedStop = null;
-let map, markers = {};
+// ── STATE ────────────────────────────────────────────────────────────
+let activeFilter='all', selectedStop=null, map, carouselIdx=0;
 
-// =============================================
-// INIT MAP
-// =============================================
+function catColor(c){ return {beach:'#1E6B8A',nature:'#1A7A4A',bio:'#0B7A60',history:'#A04A20'}[c]||'#555'; }
+function catLabel(c){ return {beach:'Beach',nature:'Nature',bio:'Bio Bay',history:'History & Culture'}[c]||c; }
+
+// ── MAP ──────────────────────────────────────────────────────────────
 function initMap() {
-  map = L.map('map', { center: [18.125, -65.44], zoom: 12 });
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
-  }).addTo(map);
-
-  stops.forEach(s => {
-    const color = catColor(s.cat);
-    const icon = L.divIcon({
-      className: '',
-      html: `<div style="width:30px;height:30px;border-radius:50%;background:${color};color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;font-family:DM Sans,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.3);border:2px solid white;">${s.id}</div>`,
-      iconSize: [30, 30], iconAnchor: [15, 15], popupAnchor: [0, -18]
+  map = L.map('map',{center:[18.125,-65.44],zoom:12});
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
+  stops.forEach(s=>{
+    const icon=L.divIcon({
+      className:'',
+      html:`<div style="width:30px;height:30px;border-radius:50%;background:${catColor(s.cat)};color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,0.3);border:2px solid white;">${s.id}</div>`,
+      iconSize:[30,30],iconAnchor:[15,15],popupAnchor:[0,-18]
     });
-    const m = L.marker([s.lat, s.lng], { icon }).addTo(map);
+    const m=L.marker([s.lat,s.lng],{icon}).addTo(map);
     m.bindPopup(`<div class="popup-name">${s.name}</div><div class="popup-cat">${catLabel(s.cat)}</div>`);
-    m.on('click', () => openDetail(s));
-    markers[s.id] = m;
+    m.on('click',()=>openDetail(s));
   });
 }
 
-function catColor(cat) {
-  return { beach:'#1E6B8A', nature:'#1A7A4A', bio:'#0B7A60', history:'#A04A20', food:'#8A5A10' }[cat] || '#666';
+// ── CAROUSEL ─────────────────────────────────────────────────────────
+function buildCarousel(stop) {
+  const photos=stop.photos||[];
+  if(!photos.length) return `<div class="no-photo">No photos available</div>`;
+  const slides=photos.map(url=>`<div class="carousel-slide"><img src="${url}" alt="${stop.name}" onerror="this.style.display='none'"></div>`).join('');
+  const dots=photos.length>1?`<div class="carousel-dots">${photos.map((_,i)=>`<button class="carousel-dot${i===0?' active':''}" onclick="goSlide(${i})"></button>`).join('')}</div>`:'';
+  const btns=photos.length>1?`<button class="carousel-btn carousel-prev" onclick="prevSlide()">&#8249;</button><button class="carousel-btn carousel-next" onclick="nextSlide()">&#8250;</button>`:'';
+  return `<div class="photo-carousel"><div class="carousel-track" id="ctk">${slides}</div>${btns}${dots}</div>`;
 }
-function catLabel(cat) {
-  return { beach:'Beach', nature:'Nature', bio:'Bio Bay', history:'History & Culture', food:'Food & Local' }[cat] || cat;
+function goSlide(i){
+  const n=(selectedStop?.photos||[]).length;
+  carouselIdx=((i%n)+n)%n;
+  const t=document.getElementById('ctk');
+  if(t) t.style.transform=`translateX(-${carouselIdx*100}%)`;
+  document.querySelectorAll('.carousel-dot').forEach((d,j)=>d.classList.toggle('active',j===carouselIdx));
+}
+function nextSlide(){ goSlide(carouselIdx+1); }
+function prevSlide(){ goSlide(carouselIdx-1); }
+
+// ── DETAIL ────────────────────────────────────────────────────────────
+function openDetail(stop) {
+  selectedStop=stop; carouselIdx=0;
+  renderStops();
+  if(map) map.panTo([stop.lat,stop.lng],{animate:true,duration:0.5});
+  document.getElementById('detail-content').innerHTML=`
+    ${buildCarousel(stop)}
+    <div class="detail-name-bar">
+      <h2>${stop.name}</h2>
+      <p>${catLabel(stop.cat)}</p>
+    </div>
+    <div class="detail-body">
+      <div class="detail-meta-grid">
+        <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-value">${stop.duration}</div></div>
+        <div class="meta-item"><div class="meta-label">Best Time</div><div class="meta-value">${stop.best}</div></div>
+        <div class="meta-item" style="grid-column:span 2"><div class="meta-label">Hours</div><div class="meta-value">${stop.hours}</div></div>
+      </div>
+      <div class="detail-section"><h3>About</h3><p>${stop.desc}</p></div>
+      <div class="detail-section"><h3>Tips</h3><ul>${stop.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+    </div>`;
+  document.getElementById('detail-panel').classList.add('open');
 }
 
-// =============================================
-// RENDER STOPS
-// =============================================
+// ── RENDER ────────────────────────────────────────────────────────────
 function renderStops() {
-  const list = document.getElementById('stop-list');
-  const filtered = activeFilter === 'all' ? stops : stops.filter(s => s.cat === activeFilter);
-  list.innerHTML = filtered.map(s => `
-    <div class="stop-card ${selectedStop?.id === s.id ? 'selected' : ''}" onclick="openDetail(stops.find(x=>x.id===${s.id}))">
+  const list=activeFilter==='all'?stops:stops.filter(s=>s.cat===activeFilter);
+  document.getElementById('stop-list').innerHTML=list.map(s=>`
+    <div class="stop-card ${selectedStop?.id===s.id?'selected':''}" onclick="openDetail(stops.find(x=>x.id===${s.id}))">
       <div class="stop-num num-${s.cat}">${s.id}</div>
       <div class="stop-info">
         <div class="stop-name">${s.name}</div>
@@ -609,121 +543,58 @@ function renderStops() {
           <span class="badge" style="background:rgba(0,0,0,0.05);color:#666;">${s.best}</span>
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
-// =============================================
-// RENDER ITINERARY
-// =============================================
 function renderItinerary() {
-  const days = [1, 2];
-  const el = document.getElementById('itinerary-list');
-  el.innerHTML = days.map(day => {
-    const items = itinerary.filter(i => i.day === day);
-    return `
-      <div class="day-block">
-        <div class="day-label">Day ${day}</div>
-        ${items.map((item, idx) => {
-          const stop = stops.find(s => s.id === item.stopId);
-          return `
-            <div class="it-stop">
-              <div class="it-left">
-                <div class="it-dot dot-${stop.cat}"></div>
-                ${idx < items.length-1 ? '<div class="it-line"></div>' : ''}
-              </div>
-              <div class="it-content" onclick="openDetail(stops.find(s=>s.id===${stop.id}));showView('stops')">
-                <div class="it-time">${item.time}</div>
-                <div class="it-name">${stop.name}</div>
-                <div class="it-desc">${item.note}</div>
-                <span class="it-duration">${stop.duration}</span>
-              </div>
-            </div>
-          `;
-        }).join('')}
-      </div>
-    `;
-  }).join('');
+  document.getElementById('itinerary-list').innerHTML=[1,2].map(day=>`
+    <div class="day-block">
+      <div class="day-label">Day ${day}</div>
+      ${itinerary.filter(i=>i.day===day).map((item,idx,arr)=>{
+        const s=stops.find(x=>x.id===item.stopId);
+        return `<div class="it-stop">
+          <div class="it-left">
+            <div class="it-dot dot-${s.cat}"></div>
+            ${idx<arr.length-1?'<div class="it-line"></div>':''}
+          </div>
+          <div class="it-content" onclick="openDetail(stops.find(x=>x.id===${s.id}));showView('stops')">
+            <div class="it-time">${item.time}</div>
+            <div class="it-name">${s.name}</div>
+            <div class="it-desc">${item.note}</div>
+            <span class="it-dur">${s.duration}</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`).join('');
 }
 
-// =============================================
-// RENDER HISTORY
-// =============================================
 function renderHistory() {
-  document.getElementById('history-list').innerHTML = historyItems.map(h => `
+  document.getElementById('history-list').innerHTML=historyItems.map(h=>`
     <div class="history-card">
       <div class="history-year">${h.year}</div>
       <div class="history-title">${h.title}</div>
       <div class="history-text">${h.text}</div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
-// =============================================
-// DETAIL PANEL
-// =============================================
-function openDetail(stop) {
-  selectedStop = stop;
-  renderStops();
-  if (map) map.panTo([stop.lat, stop.lng], { animate: true, duration: 0.5 });
-  const color = catColor(stop.cat);
-  document.getElementById('detail-content').innerHTML = `
-    <div class="detail-hero" style="background: linear-gradient(160deg, ${color}cc, ${color}ee);">
-      <div>
-        <div class="detail-hero-title">${stop.name}</div>
-        <div class="detail-hero-sub">${catLabel(stop.cat)}</div>
-      </div>
-    </div>
-    <div class="detail-body">
-      <div class="detail-meta-grid">
-        <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-value">${stop.duration}</div></div>
-        <div class="meta-item"><div class="meta-label">Best Time</div><div class="meta-value">${stop.best}</div></div>
-        <div class="meta-item" style="grid-column:span 2"><div class="meta-label">Hours</div><div class="meta-value">${stop.hours}</div></div>
-      </div>
-      <div class="detail-section">
-        <h3>About</h3>
-        <p>${stop.desc}</p>
-      </div>
-      <div class="detail-section">
-        <h3>Tips</h3>
-        <ul class="detail-tips">${stop.tips.map(t => `<li>${t}</li>`).join('')}</ul>
-      </div>
-    </div>
-  `;
-  document.getElementById('detail-panel').classList.add('open');
-}
-
-function closeDetail() {
-  selectedStop = null;
-  document.getElementById('detail-panel').classList.remove('open');
-  renderStops();
-}
-
-// =============================================
-// FILTERS & VIEWS
-// =============================================
-function toggleFilter(btn, cat) {
-  activeFilter = cat;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('on'));
+function toggleFilter(btn,cat) {
+  activeFilter=cat;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
   renderStops();
 }
 
 function showView(name) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById('view-' + name).classList.add('active');
-  document.querySelectorAll('nav button').forEach((b, i) => {
-    b.classList.toggle('active', ['stops','itinerary','history'][i] === name);
-  });
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('nav button').forEach((b,i)=>b.classList.toggle('active',['stops','itinerary','history'][i]===name));
 }
 
-// =============================================
-// BOOT
-// =============================================
+// ── BOOT ──────────────────────────────────────────────────────────────
 renderStops();
 renderItinerary();
 renderHistory();
-setTimeout(initMap, 50);
+setTimeout(initMap,50);
 </script>
 </body>
 </html>
