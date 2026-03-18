@@ -166,6 +166,7 @@
   .dot-nature  { background:#1A7A4A; }
   .dot-bio     { background:#0B7A60; }
   .dot-history { background:#A04A20; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -233,7 +234,7 @@ const stops = [
   {
     id:1, name:"Sun Bay (Sombé)", cat:"beach",
     lat:18.1057, lng:-65.4380,
-    photos:["https://picsum.photos/seed/vieques10/800/500","https://picsum.photos/seed/vieques11/800/500"],
+    photos:["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800","https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800"],
     tagline:"The island's most beloved public beach",
     desc:"Sun Bay is the crown jewel of Vieques' public beaches — a sweeping mile-long crescent of golden sand backed by sea grape trees. The calm, shallow turquoise waters make it ideal for swimming and snorkeling.",
     tips:["Arrive early on weekends to claim a spot","Shade under sea grape trees along the eastern end","Walk east toward Media Luna for quieter sands"],
@@ -242,7 +243,7 @@ const stops = [
   {
     id:2, name:"Media Luna Beach", cat:"beach",
     lat:18.1048, lng:-65.4313,
-    photos:["https://picsum.photos/seed/vieques12/800/500","https://picsum.photos/seed/vieques13/800/500"],
+    photos:["https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800","https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=800"],
     tagline:"Secluded crescent with reef snorkeling",
     desc:"A short walk east from Sun Bay, Media Luna offers quiet escape with excellent snorkeling off the rocky edges. The reef shelters colorful fish and the occasional sea turtle.",
     tips:["Bring snorkel gear — reef is right off the beach","Often nearly empty on weekdays","Only accessible on foot from Sun Bay"],
@@ -251,7 +252,7 @@ const stops = [
   {
     id:3, name:"Navio Beach", cat:"beach",
     lat:18.1038, lng:-65.4246,
-    photos:["https://picsum.photos/seed/vieques14/800/500","https://picsum.photos/seed/vieques15/800/500"],
+    photos:["https://images.unsplash.com/photo-1500259571355-332da5cb07aa?w=800","https://images.unsplash.com/photo-1484821582734-6c6c9f99a672?w=800"],
     tagline:"Wild & remote Atlantic-facing beach",
     desc:"One of the most remote beaches on Vieques' south coast. Navio requires a short hike through brush — the reward is a wild, undeveloped stretch with dramatic waves and virtually no crowds.",
     tips:["4WD recommended for the road","Bring everything — zero facilities","Not recommended for children due to surf"],
@@ -260,7 +261,7 @@ const stops = [
   {
     id:4, name:"Mosquito Pier", cat:"nature",
     lat:18.1400, lng:-65.4700,
-    photos:["https://picsum.photos/seed/vieques20/800/500","https://picsum.photos/seed/vieques21/800/500"],
+    photos:["https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800","https://images.unsplash.com/photo-1559494007-9f5847c49d94?w=800"],
     tagline:"Snorkeling & historic military pier",
     desc:"This decommissioned Navy-era pier is a snorkeling hotspot. The pilings are encrusted with coral and sponges, attracting schools of fish, rays, and nurse sharks.",
     tips:["Morning snorkeling is best for visibility","Watch for rays in the shallow flats","Spectacular sunset photography spot"],
@@ -269,7 +270,7 @@ const stops = [
   {
     id:5, name:"Bioluminescent Bay", cat:"bio",
     lat:18.1258, lng:-65.4648,
-    photos:["https://picsum.photos/seed/vieques50/800/500","https://picsum.photos/seed/vieques51/800/500"],
+    photos:["https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800","https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=800"],
     tagline:"The brightest bio bay in the world",
     desc:"Mosquito Bay holds the Guinness World Record as the brightest bioluminescent bay on Earth. Millions of dinoflagellates light up the water with an ethereal blue-green glow when disturbed.",
     tips:["No-moon nights are the brightest","Kayak tours feel most magical","Book tours well in advance","Don't apply sunscreen before entering the water"],
@@ -278,7 +279,7 @@ const stops = [
   {
     id:6, name:"El Fortín Conde de Mirasol", cat:"history",
     lat:18.1516, lng:-65.4434,
-    photos:["https://picsum.photos/seed/vieques30/800/500","https://picsum.photos/seed/vieques31/800/500"],
+    photos:["https://images.unsplash.com/photo-1555993539-1732b0258235?w=800","https://images.unsplash.com/photo-1548199569-3e1c6aa8f949?w=800"],
     tagline:"Last Spanish fort built in the Americas",
     desc:"Built 1845–1865, El Fortín is the last military fortification built by Spain in the New World. Today it houses the Vieques Art & History Museum with exhibits on Taíno culture and the Navy struggle.",
     tips:["Open Tue–Sun, small admission fee","Best panoramic views of the north coast from the ramparts","The Navy-era exhibit is particularly moving"],
@@ -287,7 +288,7 @@ const stops = [
   {
     id:7, name:"Isabel Segunda", cat:"history",
     lat:18.1527, lng:-65.4440,
-    photos:["https://picsum.photos/seed/vieques32/800/500","https://picsum.photos/seed/vieques33/800/500"],
+    photos:["https://images.unsplash.com/photo-1601001815894-4bb6c831d06f?w=800","https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800"],
     tagline:"Vieques' vibrant main town",
     desc:"The island's largest town is a colorful grid of pastel buildings, local restaurants, and the ferry terminal. The main plaza is a hub of island life surrounded by the church and old government buildings.",
     tips:["The Sunday plaza market is worth catching","Most car and golf cart rentals are here","Ask about the mural project around town"],
@@ -296,7 +297,7 @@ const stops = [
   {
     id:8, name:"Esperanza Malecón", cat:"history",
     lat:18.0946, lng:-65.4714,
-    photos:["https://picsum.photos/seed/vieques34/800/500","https://picsum.photos/seed/vieques35/800/500"],
+    photos:["https://images.unsplash.com/photo-1520106212299-d99c443e4568?w=800","https://images.unsplash.com/photo-1528543606781-2f6e6857f318?w=800"],
     tagline:"Charming waterfront village strip",
     desc:"Esperanza is Vieques' southern village — a relaxed strip of guesthouses, restaurants, and bars along a waterfront promenade overlooking a calm bay.",
     tips:["Sunset from the malecón is stunning","Most bio bay tour operators are based here","Several excellent restaurants for fresh seafood"],
@@ -305,7 +306,7 @@ const stops = [
   {
     id:9, name:"Vieques Wildlife Refuge", cat:"nature",
     lat:18.1100, lng:-65.3900,
-    photos:["https://picsum.photos/seed/vieques40/800/500","https://picsum.photos/seed/vieques41/800/500"],
+    photos:["https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800","https://images.unsplash.com/photo-1586348943529-beaae6c28db9?w=800"],
     tagline:"3,100 acres of wild eastern lands",
     desc:"The US Fish & Wildlife Service manages the eastern two-thirds of Vieques as a protected refuge — former Navy bombing range — with pristine beaches, dry forest, mangroves, and 200+ bird species.",
     tips:["4WD required for most trails","Bird watching is excellent October–March","Pick up a refuge map at the entrance station"],
@@ -314,7 +315,7 @@ const stops = [
   {
     id:10, name:"Red Beach (Caracas)", cat:"beach",
     lat:18.1100, lng:-65.4200,
-    photos:["https://picsum.photos/seed/vieques16/800/500","https://picsum.photos/seed/vieques17/800/500"],
+    photos:["https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=800","https://images.unsplash.com/photo-1515238152791-8216bfdf89a7?w=800"],
     tagline:"Iconic calm bay with vivid blue water",
     desc:"One of the most photographed beaches on Vieques, Red Beach sits inside a sheltered cove in the Wildlife Refuge. The water is impossibly clear — ideal for snorkeling and paddleboarding.",
     tips:["Some of the best snorkeling on the island","Road requires 4WD","No facilities — bring water and food"],
@@ -323,7 +324,7 @@ const stops = [
   {
     id:11, name:"Blue Beach (La Chiva)", cat:"beach",
     lat:18.1050, lng:-65.4050,
-    photos:["https://picsum.photos/seed/vieques18/800/500","https://picsum.photos/seed/vieques19/800/500"],
+    photos:["https://images.unsplash.com/photo-1490077476659-095159692ab5?w=800","https://images.unsplash.com/photo-1548407260-da850faa41e3?w=800"],
     tagline:"Seven coves of crystalline water",
     desc:"Blue Beach is a series of seven small coves separated by rocky headlands inside the Wildlife Refuge. Locals consider it the most beautiful beach on the island — water an electric shade of cobalt and turquoise.",
     tips:["Explore multiple coves along the beach","Bring snorkel gear and plenty of water","Gets windy in the afternoon — best for morning visits"],
@@ -332,7 +333,7 @@ const stops = [
   {
     id:12, name:"Green Beach", cat:"beach",
     lat:18.1320, lng:-65.5190,
-    photos:["https://picsum.photos/seed/vieques22/800/500","https://picsum.photos/seed/vieques23/800/500"],
+    photos:["https://images.unsplash.com/photo-1449034446853-66c86144b0ad?w=800","https://images.unsplash.com/photo-1533760881669-80db4d7b341e?w=800"],
     tagline:"Remote western tip with channel views",
     desc:"At the far western end of the island, Green Beach faces the channel between Vieques and Puerto Rico. On a clear day you can see El Yunque rainforest and Culebra island from the shore.",
     tips:["The sunset here is extraordinary","Calm shallow water great for swimming","Very isolated — solitude is part of the appeal"],
@@ -341,7 +342,7 @@ const stops = [
   {
     id:13, name:"Playa Negra (Black Sand)", cat:"beach",
     lat:18.1490, lng:-65.4550,
-    photos:["https://picsum.photos/seed/vieques24/800/500","https://picsum.photos/seed/vieques25/800/500"],
+    photos:["https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=800","https://images.unsplash.com/photo-1540979388789-6cee28a1cdc9?w=800"],
     tagline:"Unusual volcanic black sand beach",
     desc:"One of the few black sand beaches in Puerto Rico, Playa Negra sits on the north coast near Isabel Segunda. The dark mineral sand contrasts strikingly with the turquoise water.",
     tips:["One of the most unique beaches on the island","Great for photos with the color contrast","Locals often fish from the shore here"],
@@ -350,7 +351,7 @@ const stops = [
   {
     id:14, name:"Punta Mulas Lighthouse", cat:"history",
     lat:18.1562, lng:-65.4442,
-    photos:["https://picsum.photos/seed/vieques36/800/500","https://picsum.photos/seed/vieques37/800/500"],
+    photos:["https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800","https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800"],
     tagline:"Historic 1896 lighthouse at land's end",
     desc:"The Punta Mulas lighthouse, built in 1896, guards the northern shore from a coral bluff. The elegant Spanish colonial structure sits surrounded by cacti and windswept scrub with beautiful channel views.",
     tips:["Located near the ferry terminal","Grounds open but structure may be closed","Gorgeous golden hour photography spot"],
@@ -359,7 +360,7 @@ const stops = [
   {
     id:15, name:"La Laguna (Kiani Lagoon)", cat:"nature",
     lat:18.1030, lng:-65.4720,
-    photos:["https://picsum.photos/seed/vieques42/800/500","https://picsum.photos/seed/vieques43/800/500"],
+    photos:["https://images.unsplash.com/photo-1499678329028-101435549a4e?w=800","https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800"],
     tagline:"Mangrove lagoon kayaking & birding",
     desc:"A protected mangrove lagoon near Esperanza. Kayaking through the narrow mangrove channels at dawn is one of Vieques' most peaceful experiences. Herons, kingfishers, and pelicans are regular sightings.",
     tips:["Kayak rentals available in Esperanza","Dawn paddling has the best birdlife","Great complement to the bio bay at night"],
@@ -368,7 +369,7 @@ const stops = [
   {
     id:16, name:"Cerro Ventana (Window Hill)", cat:"nature",
     lat:18.1350, lng:-65.4600,
-    photos:["https://picsum.photos/seed/vieques44/800/500","https://picsum.photos/seed/vieques45/800/500"],
+    photos:["https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800","https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=800"],
     tagline:"Natural rock window panorama",
     desc:"A short hike through dry forest leads to a natural rock formation with a 'window' opening that frames a breathtaking view of the island's interior and both coasts.",
     tips:["A local guide helps find the trailhead","Bring water — no shade on upper section","Best light for the view is mid-morning"],
@@ -377,7 +378,7 @@ const stops = [
   {
     id:17, name:"Taíno Cultural Site", cat:"history",
     lat:18.1200, lng:-65.4900,
-    photos:["https://picsum.photos/seed/vieques38/800/500","https://picsum.photos/seed/vieques39/800/500"],
+    photos:["https://images.unsplash.com/photo-1548199569-3e1c6aa8f949?w=800","https://images.unsplash.com/photo-1555993539-1732b0258235?w=800"],
     tagline:"Evidence of the island's first inhabitants",
     desc:"Vieques was inhabited by the Taíno for centuries before European contact. The museum at El Fortín houses recovered artifacts and explains the Taíno heritage still echoed in local place names.",
     tips:["The fort museum covers this in detail","Some petroglyphs accessible with a local guide","The name 'Vieques' likely derives from a Taíno word"],
@@ -386,7 +387,7 @@ const stops = [
   {
     id:18, name:"Playa La Plata (Secret Beach)", cat:"beach",
     lat:18.1080, lng:-65.4600,
-    photos:["https://picsum.photos/seed/vieques26/800/500","https://picsum.photos/seed/vieques27/800/500"],
+    photos:["https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800","https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800"],
     tagline:"The island's best-kept secret",
     desc:"La Plata is a small crescent of powder-white sand with calm, clear water, accessible only via a rough track and short walk. No facilities, no crowds — just waves.",
     tips:["Ask a local you trust for the exact location","4WD is essential","Pack in everything and pack out all trash"],
@@ -447,15 +448,42 @@ function initMap() {
 
 // ── CAROUSEL ─────────────────────────────────────────────────────────
 function buildCarousel(stop) {
-  const photos=stop.photos||[];
-  if(!photos.length) return `<div class="no-photo">No photos available</div>`;
-  const slides=photos.map(url=>`<div class="carousel-slide"><img src="${url}" alt="${stop.name}" onerror="this.style.display='none'"></div>`).join('');
-  const dots=photos.length>1?`<div class="carousel-dots">${photos.map((_,i)=>`<button class="carousel-dot${i===0?' active':''}" onclick="goSlide(${i})"></button>`).join('')}</div>`:'';
-  const btns=photos.length>1?`<button class="carousel-btn carousel-prev" onclick="prevSlide()">&#8249;</button><button class="carousel-btn carousel-next" onclick="nextSlide()">&#8250;</button>`:'';
-  return `<div class="photo-carousel"><div class="carousel-track" id="ctk">${slides}</div>${btns}${dots}</div>`;
+  setTimeout(() => fetchAndLoadPhotos(stop), 10);
+  return `<div class="photo-carousel" id="carousel-wrap">
+    <div style="height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;">
+      <div style="width:36px;height:36px;border:3px solid rgba(255,255,255,0.15);border-top-color:rgba(255,255,255,0.7);border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+      <span style="color:rgba(255,255,255,0.45);font-size:0.8rem;">Loading photos...</span>
+    </div>
+  </div>`;
+}
+async function fetchAndLoadPhotos(stop) {
+  const wrap = document.getElementById('carousel-wrap');
+  if (!wrap) return;
+  const queries = [stop.searchQuery || (stop.name + ' Vieques'), 'Vieques Puerto Rico beach'];
+  for (const q of queries) {
+    try {
+      const url = `https://en.wikipedia.org/w/api.php?action=query&generator=images&titles=${encodeURIComponent(q)}&gimlimit=8&prop=imageinfo&iiprop=url|mime&format=json&origin=*`;
+      const data = await fetch(url).then(r=>r.json());
+      const imgs = Object.values(data.query?.pages||{})
+        .map(p=>p.imageinfo?.[0])
+        .filter(i=>i&&i.mime&&i.mime.startsWith('image/')&&!i.url.match(/Flag|Logo|icon|\.svg/i))
+        .map(i=>i.url).slice(0,4);
+      if (imgs.length) { renderCarouselPhotos(wrap, imgs, stop.name); return; }
+    } catch(e) {}
+  }
+  wrap.innerHTML = `<div style="height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.35);font-size:0.85rem;">No photos available</div>`;
+}
+function renderCarouselPhotos(wrap, imgs, name) {
+  carouselIdx = 0;
+  const slides = imgs.map(u=>`<div class="carousel-slide"><img src="${u}" alt="${name}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.parentElement.style.display='none'"></div>`).join('');
+  const dots = imgs.length>1 ? `<div class="carousel-dots">${imgs.map((_,i)=>`<button class="carousel-dot${i===0?' active':''}" onclick="goSlide(${i})"></button>`).join('')}</div>` : '';
+  const btns = imgs.length>1 ? `<button class="carousel-btn carousel-prev" onclick="prevSlide()">&#8249;</button><button class="carousel-btn carousel-next" onclick="nextSlide()">&#8250;</button>` : '';
+  wrap.innerHTML = `<div class="carousel-track" id="ctk">${slides}</div>${btns}${dots}`;
+  wrap._total = imgs.length;
 }
 function goSlide(i){
-  const n=(selectedStop?.photos||[]).length;
+  const wrap=document.getElementById('carousel-wrap');
+  const n=wrap?._total||(selectedStop?.photos||[]).length||1;
   carouselIdx=((i%n)+n)%n;
   const t=document.getElementById('ctk');
   if(t) t.style.transform=`translateX(-${carouselIdx*100}%)`;
