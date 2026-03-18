@@ -216,7 +216,7 @@ const stops = [
   {
     id:1, name:"Sun Bay (Sombé)", cat:"beach",
     lat:18.1057, lng:-65.4380,
-    wiki:"https://en.wikipedia.org/wiki/Vieques,_Puerto_Rico#Beaches",
+    wiki:"https://en.wikipedia.org/wiki/Sun_Bay_(Vieques)",
     photos:["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800","https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800"],
     tagline:"The island's most beloved public beach",
     desc:"Sun Bay is the crown jewel of Vieques' public beaches — a sweeping mile-long crescent of golden sand backed by sea grape trees. The calm, shallow turquoise waters make it ideal for swimming and snorkeling.",
@@ -356,7 +356,7 @@ const stops = [
   {
     id:15, name:"La Laguna (Kiani Lagoon)", cat:"nature",
     lat:18.1030, lng:-65.4720,
-    wiki:"https://en.wikipedia.org/wiki/Vieques,_Puerto_Rico",
+    wiki:"https://en.wikipedia.org/wiki/Vieques_National_Wildlife_Refuge",
     photos:["https://images.unsplash.com/photo-1499678329028-101435549a4e?w=800","https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800"],
     tagline:"Mangrove lagoon kayaking & birding",
     desc:"A protected mangrove lagoon near Esperanza. Kayaking through the narrow mangrove channels at dawn is one of Vieques' most peaceful experiences. Herons, kingfishers, and pelicans are regular sightings.",
@@ -433,7 +433,7 @@ function catLabel(c){ return {beach:'Beach',nature:'Nature',bio:'Bio Bay',histor
 // ── MAP ──────────────────────────────────────────────────────────────
 function initMap() {
   map = L.map('map',{center:[18.125,-65.44],zoom:12});
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'Tiles © Esri'}).addTo(map);
   stops.forEach(s=>{
     const icon=L.divIcon({
       className:'',
